@@ -1,13 +1,14 @@
 var irc    = require('irc')
 , winston  = require('winston')
-, config   = require('yaml-config')
+, fs       = require('fs')
+, yaml     = require('js-yaml')
 , coin     = require('node-dogecoin');
 
 // load winston's cli defaults
 winston.cli();
 
 // load settings
-var settings = config.readConfig('./config/irc.yml');
+var settings = yaml.load(fs.readFileSync("./config.yml", "utf-8"));
 
 // connect to coin json-rpc
 winston.info('Connecting to coind...');
@@ -40,8 +41,6 @@ var client = new irc.Client(settings.connection.host, settings.login.nickname, {
 , channels: settings.channels
 , userName: settings.login.username
 , realName: settings.login.realname
-
-, debug: true
 });
 
 // gets user's login status
@@ -246,7 +245,7 @@ client.addListener('message', function(from, channel, message) {
                   return;
                 }
               });
-            }
+            });
           });
         });
       } else {
