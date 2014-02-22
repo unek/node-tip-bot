@@ -1,13 +1,15 @@
 connection: 
-  host: irc.freenode.net
+  host: rajaniemi.freenode.net
   port: 6667
   secure: false
+  status_command: ACC
 login: 
   nickname: nodetip
   username: nodetip
   realname: node.js dogecoin tipping bot
 channels: 
   - '##unek'
+  - '##tipbots'
 log:
   file: tipbot.log
 rpc:
@@ -15,14 +17,29 @@ rpc:
   port: 22555
   user: dogecoinrpc
   pass: pass
-  master_account: nodetip
 coin:
   withdrawal_fee: 2
   min_withdraw: 5
   min_confirmations: 3
-  min_tip: 5
-  short_name: ' DOGE'
+  min_tip: 10
+  short_name: Đ
   full_name: dogecoin
+commands:
+  help:
+    pm: true
+    channel: false
+  tip:
+    pm: true
+    channel: true
+  balance:
+    pm: true
+    channel: false
+  withdraw:
+    pm: true
+    channel: false
+  address:
+    pm: true
+    channel: false
 messages:
   error: 'Sorry %name%, something went wrong.'
   no_funds: "Sorry %name%, you don't have enough funds (you're %short%%short_name% short)"
@@ -30,10 +47,18 @@ messages:
   tipped: 'Wow! %from% tipped %to% %amount%%short_name%! "/msg %nick% help" to claim.'
   balance: '%name% has %balance%%short_name%.'
   balance_unconfirmed: '%name% has %balance%%short_name% (unconfirmed: %unconfirmed%%short_name%)'
-  deposit_address: "%name%'s deposit address is %address%"
+  deposit_address: Your deposit address %address%
   withdraw_too_small: 'Sorry %name%, you need to withdraw at least %min_withdraw%%short_name% (you have %balance%%short_name%)'
   invalid_address: 'Sorry %name%, the address you specified is invalid (%address%).'
-  withdraw_success: '%name%: %amount%%short_name% has been withdrawn from your account to %address%'
-  withdraw_success2: 'You have been charged %withdrawal_fee%%short_name% withdrawal fee. Transaction id: %transaction%.'
   tip_too_small: 'Sorry %from%, your tip to %to% (%amount%%short_name%) is too small (min. %min_tip%%short_name%).'
   tip_self: "Sorry %name%, you can't tip yourself!"
+  withdraw_success: 
+    - '%name%: %amount%%short_name% has been withdrawn from your account to %address%'
+    - 'You have been charged %withdrawal_fee%%short_name% withdrawal fee.'
+    - 'Transaction %transaction% completed.'
+  help:
+    - 'You can use following commands:'
+    - 'balance - displays your current wallet balance'
+    - 'address - displays %full_name% address where you can send your funds to the tip bot'
+    - 'withdraw <%full_name% address> - withdraws your whole wallet balance to specified address (taking %withdrawal_fee% withdrawal fee)'
+    - 'tip <nick> <amount> - sends the specified amount of %full_name% to the specified nickname'
