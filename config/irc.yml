@@ -14,6 +14,7 @@ development:
     port: 22555
     user: 'dogecoinrpc'
     pass: 'pass'
+    master_account: unek
   coin:
     withdrawal_fee: 2
     min_withdraw: 5

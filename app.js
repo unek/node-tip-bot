@@ -231,6 +231,22 @@ client.addListener('message', function(from, channel, message) {
 
             client.say(channel, settings.messages.withdraw_success.expand({name: from, address: address, balance: balance, amount: balance - settings.coin.withdrawal_fee, transaction: reply}));
             client.say(channel, settings.messages.withdraw_success2.expand({name: from, address: address, balance: balance, amount: balance - settings.coin.withdrawal_fee, transaction: reply}));
+
+            // transfer the rest (usually withdrawal fee - txfee) to the master account
+            coin.getBalance(from.toLowerCase(), function(err, balance) {
+              if(err) {
+                winston.error('Something went wrong while transferring fees', err);
+                return;
+              }
+
+              var balance = typeof(balance) == 'object' ? balance.result : balance;
+              coin.move(from.toLowerCase(), settings.rpc.master_account, balance, function(err) {
+                if(err) {
+                  winston.error('Something went wrong while transferring fees', err);
+                  return;
+                }
+              });
+            }
           });
         });
       } else {
