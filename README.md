@@ -48,6 +48,11 @@ Here you can restrict some commands to work only on PM/channel.
 ### messages
 Whatever the bot says. Supports expandable variables (eg. `%nick%` for bot's nick). By default all config vars from `rpc` section are available.
 
+## How does it work?
+Every nickname has it's own account in your wallet. When tipping or withdrawing, bot checks if user is registered and identified with NickServ. If so, he moves the money from one account to another, or when withdrawing, transfers coins to other wallet.
+
+## How to run it?
+To run the bot simply use `npm start` or `node bin/tipbot`.
 
 ## Commands
 

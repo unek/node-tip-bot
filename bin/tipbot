@@ -106,17 +106,12 @@ client.addListener('registered', function(message) {
   client.say('NickServ', 'IDENTIFY ' + settings.login.nickserv_password);
 });
 
-client.addListener('close', function(message) {
-  client.log(message);
-  winston.warn('Server %s disconnected.', message);
-});
-
 client.addListener('error', function(message) {
   winston.error('Received an error from IRC network: ', message);
 });
 
 client.addListener('message', function(from, channel, message) {
-  var match   = message.match(/^(!?)(\S+)/);
+  var match = message.match(/^(!?)(\S+)/);
   if(match == null) return;
   var prefix  = match[1];
   var command = match[2];
@@ -131,8 +126,12 @@ client.addListener('message', function(from, channel, message) {
   // if pms, make sure to respond to pms instead to itself
   if(channel == client.nick) channel = from;
 
+  // if not that, message will be undefined for some reason
+  // todo: find a fix for that
+  var msg = message;
   client.getLoginStatus(from, function(status) {
-    // check if the sending user is logged in (identified)
+    var message = msg;
+    // check if the sending user is logged in (identified) with nickserv
     if(status != 3) {
       winston.info('%s tried to use command `%s`, but is not identified.', from, message);
       client.say(channel, settings.messages.not_identified.expand({name: from}));
