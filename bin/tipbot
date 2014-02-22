@@ -8,7 +8,7 @@ var irc    = require('irc')
 winston.cli();
 
 // load settings
-var settings = yaml.load(fs.readFileSync("./config.yml", "utf-8"));
+var settings = yaml.load(fs.readFileSync("./config/config.yml", "utf-8"));
 
 // connect to coin json-rpc
 winston.info('Connecting to coind...');

@@ -2,7 +2,7 @@
   "name": "node-tip-bot",
   "version": "0.8.0",
   "description": "node.js based tipping bot for dogecoin",
-  "main": "app.js",
+  "main": "bin/tipbot",
   "dependencies": {
     "irc": "~0.3.6",
     "js-yaml": "~3.0.1",
@@ -11,7 +11,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bin/tipbot"
   },
   "repository": {
     "type": "git",
