@@ -4,11 +4,13 @@ var irc    = require('irc')
 , yaml     = require('js-yaml')
 , coin     = require('node-dogecoin');
 
+// load settings
+var settings = yaml.load(fs.readFileSync('./config/config.yml', 'utf-8'));
+
 // load winston's cli defaults
 winston.cli();
 
-// load settings
-var settings = yaml.load(fs.readFileSync('./config/config.yml', 'utf-8'));
+//  winston.add(winston.transports.File, 
 
 // connect to coin json-rpc
 winston.info('Connecting to coind...');
@@ -104,7 +106,6 @@ client.addListener('error', function(message) {
 });
 
 client.addListener('message', function(from, channel, message) {
-  winston.info('[%s] <%s> %s', channel, from, message);
   if(/^!tip/.test(message)) {
     var match = message.match(/^!tip (\S+) (\d+)/);
     if(match == null || match < 3) {
@@ -113,6 +114,11 @@ client.addListener('message', function(from, channel, message) {
     }
     var to     = match[1];
     var amount = Number(match[2]);
+
+    if(to.toLowerCase() == from.toLowerCase()) {
+      client.say(channel, settings.messages.self_tip.expand({name: from}));
+      return;
+    }
 
     if(amount < settings.coin.min_tip) {
       client.say(channel, settings.messages.tip_too_small.expand({from: from, to: to, amount: amount}));
@@ -170,7 +176,7 @@ client.addListener('message', function(from, channel, message) {
         return;
       }
 
-      client.say(channel, settings.messages.expand({name: user, address: address}));
+      client.say(channel, settings.messages.deposit_address.expand({name: user, address: address}));
     });
   }
 
@@ -263,13 +269,4 @@ client.addListener('message', function(from, channel, message) {
       }
     });
   }
-});
-
-client.addListener('notice', function(from, to, message) {
-  if(to == '*') return false;
-  winston.info('NOTICE: [%s] <%s> %s', to, from, message);
-});
-
-client.addListener('selfMessage', function(to, message) {
-  winston.info('[%s] <%s> %s', to, this.nick, message);
 });
