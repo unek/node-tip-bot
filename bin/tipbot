@@ -160,36 +160,37 @@ client.addListener('message', function(from, channel, message) {
         }
         // check balance with min. 5 confirmations
         coin.getBalance(from, settings.coin.min_confirmations, function(err, balance) {
-        if(err) {
-          winston.error('Error in !tip command.', err);
-          client.say(channel, settings.messages.error.expand({name: from}));
-          return;
-        }
-        var balance = typeof(balance) == 'object' ? balance.result : balance;
+          if(err) {
+            winston.error('Error in !tip command.', err);
+            client.say(channel, settings.messages.error.expand({name: from}));
+            return;
+          }
+          var balance = typeof(balance) == 'object' ? balance.result : balance;
 
-        if(balance >= amount) {
-          client.getAddress(to, function(err, to_address) { // get the address to actually create a new one
-            if(err) {
-              winston.error('Error in !tip command', err);
-              client.say(channel, settings.messages.error.expand({name: from}));
-              return;
-            }
-
-            coin.send('move', from.toLowerCase(), to.toLowerCase(), amount, function(err, reply) {
-              if(err || !reply) {
+          if(balance >= amount) {
+            client.getAddress(to, function(err, to_address) { // get the address to actually create a new one
+              if(err) {
                 winston.error('Error in !tip command', err);
                 client.say(channel, settings.messages.error.expand({name: from}));
                 return;
               }
 
-              winston.info('%s tipped %s %d%s', from, to, amount, settings.coin.short_name)
-              client.say(channel, settings.messages.tipped.expand({from: from, to: to, amount: amount}));
+              coin.send('move', from.toLowerCase(), to.toLowerCase(), amount, function(err, reply) {
+                if(err || !reply) {
+                  winston.error('Error in !tip command', err);
+                  client.say(channel, settings.messages.error.expand({name: from}));
+                  return;
+                }
+
+                winston.info('%s tipped %s %d%s', from, to, amount, settings.coin.short_name)
+                client.say(channel, settings.messages.tipped.expand({from: from, to: to, amount: amount}));
+              });
             });
-          })
-        } else {
-          winston.info('%s tried to tip %s %d, but has only %d', from, to, amount, balance);
-          client.say(channel, settings.messages.no_funds.expand({name: from, balance: balance, short: amount - balance, amount: amount}));
-        }
+          } else {
+            winston.info('%s tried to tip %s %d, but has only %d', from, to, amount, balance);
+            client.say(channel, settings.messages.no_funds.expand({name: from, balance: balance, short: amount - balance, amount: amount}));
+          }
+        });
         break;
       case 'address':
         var user = from.toLowerCase();
