@@ -12,29 +12,35 @@ After installation proceed to the configuration.
 
 ## Configuration
 To configure, edit the config/config.yml file.
+
 ### connection
 IRC network connection info.
 * **host** - hostname of the IRC server
 * **port** - port of the IRC server
 * **secure** - use secured connection
 * **status_command** - NickServ command to get nick's login status, ACC on freenode, STATUS on some other networks
+
 ### login
 IRC network connection and login info.
 * **nickname** - bot's nickname
 * **username** - bot's username
 * **realname** - bot's realname
 * **nickserv_password** - nickserv password to identify with
+
 ### channels
 List of channels to auto-join to.
+
 ### log
 Logging settings.
 * **file** - file to log to. Set to `false` to disable logging to file.
+
 ### rpc
 JSON RPC API connection info.
 * **host** - JSON RPC API hostname
 * **port** - API port (by default 22555 for dogecoin)
 * **user** - API username
 * **pass** - API password (keep that secure)
+
 ### coin
 Basic coin settings.
 * **withdrawal_fee** - fee collected on withdraw to cover up txfee, the rest goes to bot's wallet.
@@ -43,8 +49,10 @@ Basic coin settings.
 * **min_tip** - minimum amount of coins to tip
 * **short_name** - short coin's name (eg. `Đ` or `DOGE`)
 * **full_name** - full coin's name (eg. `dogecoin`)
+
 ### commands
 Here you can restrict some commands to work only on PM/channel.
+
 ### messages
 Whatever the bot says. Supports expandable variables (eg. `%nick%` for bot's nick). By default all config vars from `rpc` section are available.
 
