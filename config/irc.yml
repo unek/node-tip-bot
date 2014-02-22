@@ -1,0 +1,27 @@
+development:
+  connection: 
+    host: irc.freenode.net
+    port: 6667
+    secure: false
+  login: 
+    nickname: 'nodetip'
+    username: 'nodetip'
+    realname: node.js dogecoin tipping bot
+  channels: 
+    - '##tipbot'
+  rpc:
+    host: localhost
+    port: 22555
+    user: 'dogecoinrpc'
+    pass: 'pass'
+  coin:
+    withdrawal_fee: 2
+    min_withdraw: 5
+    min_confirmations: 3
+    short_name: ' DOGE'
+    fullname: dogecoin
+  messages:
+    error: 'Sorry %name%, something went wrong.'
+    nofunds: "Sorry %name%, you don't have enough funds (you're %short% DOGE short)"
+    notidentified: '%name%: You need to be identified with NickServ to tip.'
+    tipped: 'Wow! %from% tipped %to% %amount% DOGE! "/msg %nick% help" to claim.'
