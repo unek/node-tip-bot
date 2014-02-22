@@ -117,6 +117,7 @@ client.addListener('error', function(message) {
 
 client.addListener('message', function(from, channel, message) {
   var match   = message.match(/^(!?)(\S+)/);
+  if(match == null) return;
   var prefix  = match[1];
   var command = match[2];
 
@@ -137,7 +138,7 @@ client.addListener('message', function(from, channel, message) {
       client.say(channel, settings.messages.not_identified.expand({name: from}));
       return;
     }
-    
+
     switch(command) {
       case 'tip':
         var match = message.match(/^.?tip (\S+) (\d+)/);
