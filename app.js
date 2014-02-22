@@ -145,11 +145,11 @@ client.addListener('message', function(from, channel, message) {
             })
           } else {
             winston.info('%s tried to tip %s %d, but has only %d', from, to, amount, balance);
-            client.say(channel, settings.messages.no-funds.expand({name: from, balance: balance, short: amount - balance, amount: amount});
+            client.say(channel, settings.messages.no_funds.expand({name: from, balance: balance, short: amount - balance, amount: amount}));
           }
         })
       } else {
-        client.say(channel, settings.message.not_identified.expand({name: from});
+        client.say(channel, settings.messages.not_identified.expand({name: from}));
       }
     });
   }
@@ -182,12 +182,12 @@ client.addListener('message', function(from, channel, message) {
       coin.getBalance(user, 0, function(err, unconfirmed_balance) {
       if(err) {
           winston.error('Error in !balance command: %s', err);
-          client.say(channel, settings.message.balance.expand({balance: balance, name: user}));
+          client.say(channel, settings.messages.balance.expand({balance: balance, name: user}));
           return;
         }
 
         var unconfirmed_balance = typeof(unconfirmed_balance) == 'object' ? unconfirmed_balance.result : unconfirmed_balance;
-        client.say(channel, settings.message.balance.expand({balance: balance, name: user, unconfirmed: unconfirmed_balance - balance}));
+        client.say(channel, settings.messages.balance.expand({balance: balance, name: user, unconfirmed: unconfirmed_balance - balance}));
       })
     });
   }
@@ -229,8 +229,8 @@ client.addListener('message', function(from, channel, message) {
               return;
             }
 
-            client.say(channel, settings.messages.withdraw_success.replace({name: from, address: address, balance: balance, amount: balance - settings.coin.withdrawal_fee, transaction: reply}));
-            client.say(channel, settings.messages.withdraw_success2.replace({name: from, address: address, balance: balance, amount: balance - settings.coin.withdrawal_fee, transaction: reply}));
+            client.say(channel, settings.messages.withdraw_success.expand({name: from, address: address, balance: balance, amount: balance - settings.coin.withdrawal_fee, transaction: reply}));
+            client.say(channel, settings.messages.withdraw_success2.expand({name: from, address: address, balance: balance, amount: balance - settings.coin.withdrawal_fee, transaction: reply}));
           });
         });
       } else {
