@@ -1,6 +1,6 @@
 {
   "name": "node-tip-bot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "node.js based tipping bot for dogecoin",
   "main": "bin/tipbot",
   "dependencies": {
