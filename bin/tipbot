@@ -102,6 +102,8 @@ String.prototype.expand = function(values) {
 // basic handlers
 client.addListener('registered', function(message) {
   winston.info('Connected to %s.', message.server);
+
+  client.say('NickServ', 'IDENTIFY ' + settings.login.nickserv_password);
 });
 
 client.addListener('close', function(message) {
