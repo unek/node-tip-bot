@@ -21,7 +21,7 @@ var coin = coin({
 
 coin.getBalance(function(err, balance) {
   if(err) {
-    winston.error('Could not get %s wallet balance! ', settings.coin.fullname, err);
+    winston.error('Could not get %s wallet balance! ', settings.coin.full_name, err);
     process.exit();
     return;
   }
@@ -68,6 +68,7 @@ irc.Client.prototype.getLoginStatus = function(nickname, callback) {
   this.addListener('notice', listener);
 }
 
+// gets a empty coin address
 irc.Client.prototype.getAddress = function(nickname, callback) {
   winston.debug('Requesting address for %s', nickname);
   coin.send('getaccountaddress', nickname.toLowerCase(), function(err, address) {
@@ -79,6 +80,15 @@ irc.Client.prototype.getAddress = function(nickname, callback) {
     }
 
     callback(false, address);
+  });
+}
+
+String.prototype.expand = function(values) {
+  var global = {
+    nick: client.nick
+  }
+  return this.replace(/%([a-zA-Z_]+)%/g, function(str, variable) {
+    return values[variable] || settings.coin[variable] || global[variable]
   });
 }
 
@@ -109,7 +119,7 @@ client.addListener('message', function(from, channel, message) {
           coin.getBalance(from, settings.coin.min_confirmations, function(err, balance) {
           if(err) {
             winston.error('Error in !tip command: %s', err);
-            client.say(channel, settings.messages.error.replace('%name%', from))
+            client.say(channel, settings.messages.error.expand({name: from}));
             return;
           }
           var balance = typeof(balance) == 'object' ? balance.result : balance;
@@ -118,35 +128,28 @@ client.addListener('message', function(from, channel, message) {
             client.getAddress(to, function(err, to_address) { // get the address to actually create a new one
               if(err) {
                 winston.error('Error in !tip command: %s', err);
-                client.say(channel, settings.messages.error.replace('%name%', from))
+                client.say(channel, settings.messages.error.expand({name: from}));
                 return;
               }
 
               coin.send('move', from.toLowerCase(), to.toLowerCase(), amount, function(err, reply) {
                 if(err || !reply) {
                   winston.error('Error in !tip command: %s', err);
-                  client.say(channel, settings.messages.error.replace('%name%', from))
+                  client.say(channel, settings.messages.error.expand({name: from}));
                   return;
                 }
 
-                client.say(channel, settings.messages.tipped
-                  .replace('%from%', from)
-                  .replace('%to%', to)
-                  .replace('%amount%', amount)
-                  .replace('%nick%', client.nick));
+                winston.info("%s tipped %s %d%s", from, to, amount, settings.coin.short_name)
+                client.say(channel, settings.messages.tipped.expand({from: from, to: to, amount: amount}));
               });
             })
           } else {
             winston.info('%s tried to tip %s %d, but has only %d', from, to, amount, balance);
-            client.say(channel, settings.messages.nofunds
-              .replace('%name%', from)
-              .replace('%balance%', balance)
-              .replace('%short%', amount - balance)
-              .replace('%amount%', amount));
+            client.say(channel, settings.messages.no-funds.expand({name: from, balance: balance, short: amount - balance, amount: amount});
           }
         })
       } else {
-        client.say(channel, settings.message.notidentified.replace('%name%', from));
+        client.say(channel, settings.message.not_identified.expand({name: from});
       }
     });
   }
@@ -156,11 +159,11 @@ client.addListener('message', function(from, channel, message) {
     client.getAddress(user, function(err, address) {
       if(err) {
         winston.error('Error in !address command: %s', err);
-        client.say(channel, settings.messages.error.replace('%name%', from))
+        client.say(channel, settings.messages.error.expand({name: from}));
         return;
       }
 
-      client.say(channel, from + ': ' + user + '\'s deposit address is: ' + address);
+      client.say(channel, settings.messages.expand({name: user, address: address}));
     });
   }
 
@@ -170,7 +173,7 @@ client.addListener('message', function(from, channel, message) {
     coin.getBalance(user, settings.coin.min_confirmations, function(err, balance) {
       if(err) {
         winston.error('Error in !balance command: %s', err);
-        client.say(channel, settings.messages.error.replace('%name%', from))
+        client.say(channel, settings.messages.error.expand({name: from}));
         return;
       }
 
@@ -179,12 +182,12 @@ client.addListener('message', function(from, channel, message) {
       coin.getBalance(user, 0, function(err, unconfirmed_balance) {
       if(err) {
           winston.error('Error in !balance command: %s', err);
-          client.say(channel, user + ' has ' + balance + settings.coin.short_name);
+          client.say(channel, settings.message.balance.expand({balance: balance, name: user}));
           return;
         }
 
         var unconfirmed_balance = typeof(unconfirmed_balance) == 'object' ? unconfirmed_balance.result : unconfirmed_balance;
-        client.say(channel, user + ' has ' + balance + settings.coin.short_name + ' (unconfirmed: ' + (unconfirmed_balance - balance) + settings.coin.short_name + ')');
+        client.say(channel, settings.message.balance.expand({balance: balance, name: user, unconfirmed: unconfirmed_balance - balance}));
       })
     });
   }
@@ -200,7 +203,7 @@ client.addListener('message', function(from, channel, message) {
     coin.validateAddress(address, function(err, reply) {
       if(err) {
         winston.error('Error in !withdraw command: %s', err);
-        client.say(channel, settings.messages.error.replace('%name%', from))
+        client.say(channel, settings.messages.error.expand({name: from}));
         return;
       }
 
@@ -208,31 +211,31 @@ client.addListener('message', function(from, channel, message) {
         coin.getBalance(from.toLowerCase(), settings.coin.min_confirmations, function(err, balance) {
           if(err) {
             winston.error('Error in !withdraw command: %s', err);
-            client.say(channel, settings.messages.error.replace('%name%', from))
+            client.say(channel, settings.messages.error.expand({name: from}));
             return;
           }
           var balance = typeof(balance) == 'object' ? balance.result : balance;
 
-          if(balance < settings.coin.min_withdraw) {
+          if(balance <= settings.coin.min_withdraw) {
             winston.warn('%s tried to withdraw %d, but min is set to %d', from, balance, settings.coin.min_withdraw);
-            client.say(channel, 'Sorry ' + from + ', you have to have at least ' + settings.coin.min_withdraw + settings.coin.short_name + ' to withdraw');
+            client.say(channel, settings.messages.withdraw_too_small.expand({from: from, balance: balance}));
             return;
           }
 
           coin.sendFrom(from.toLowerCase(), address, balance - settings.coin.withdrawal_fee, function(err, reply) {
             if(err) {
               winston.error('Error in !withdraw command: %s', err);
-              client.say(channel, settings.messages.error.replace('%name%', from))
+              client.say(channel, settings.messages.error.expand({name: from}));
               return;
             }
 
-            client.say(channel, 'Your ' + balance + settings.coin.short_name + ' has been withdrawn to address ' + address);
-            client.say(channel, 'Transaction ' + reply + ' completed');
+            client.say(channel, settings.messages.withdraw_success.replace({name: from, address: address, balance: balance, amount: balance - settings.coin.withdrawal_fee, transaction: reply}));
+            client.say(channel, settings.messages.withdraw_success2.replace({name: from, address: address, balance: balance, amount: balance - settings.coin.withdrawal_fee, transaction: reply}));
           });
         });
       } else {
         winston.warn('%s tried to withdraw to an invalid address', from);
-        client.say(channel, from + ': The address you specified is invalid.');
+        client.say(channel, settings.messages.invalid_address.expand({address: address, name: from}));
       }
     });
   }
