@@ -192,7 +192,7 @@ client.addListener('message', function(from, channel, message) {
         }
 
         if(to.toLowerCase() == from.toLowerCase()) {
-          client.say(channel, settings.messages.self_tip.expand({name: from}));
+          client.say(channel, settings.messages.tip_self.expand({name: from}));
           return;
         }
 
