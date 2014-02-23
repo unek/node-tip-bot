@@ -92,3 +92,4 @@ Donations are welcome! If you like my bot and want to donate me, here are my wal
 
 * **Dogecoin**: DGLT1pTSKAXLSSSz1NGFgZNLioDyHdaDyA
 * **Flappycoin**: FPEBPCC1sr9FAJ4DbD3r4YFwMqrr9TppeK
+* **Mintcoin**: MmfHmeWGUbzzd4he4u9yXRu5tQGLs1QNDL
