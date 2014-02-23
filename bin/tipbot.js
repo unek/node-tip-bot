@@ -10,7 +10,12 @@ var settings = yaml.load(fs.readFileSync('./config/config.yml', 'utf-8'));
 // load winston's cli defaults
 winston.cli();
 
-//  winston.add(winston.transports.File, 
+// write logs to file
+if(settings.log.file) {
+  winston.add(winston.transports.File, {
+    filename: settings.log.file
+  , level: info});
+}
 
 // connect to coin json-rpc
 winston.info('Connecting to coind...');
