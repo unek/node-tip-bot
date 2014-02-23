@@ -304,6 +304,12 @@ client.addListener('message', function(from, channel, message) {
           client.say(channel, message.expand({}));
         }
         break;
+      case 'terms':
+        for(var i = 0; i < settings.messages.terms.length; i++) {
+          var message = settings.messages.terms[i];
+          client.say(channel, message.expand({}));
+        }
+        break;
     }
   });
 });

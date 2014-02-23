@@ -41,6 +41,9 @@ commands:
   address:
     pm: true
     channel: false
+  terms:
+    pm: true
+    channel: false
 messages:
   error: 'Sorry %name%, something went wrong.'
   no_funds: "Sorry %name%, you don't have enough funds (you're %short%%short_name% short)"
@@ -63,3 +66,7 @@ messages:
     - 'address - displays %full_name% address where you can send your funds to the tip bot'
     - 'withdraw <%full_name% address> - withdraws your whole wallet balance to specified address (taking %withdrawal_fee% withdrawal fee)'
     - 'tip <nick> <amount> - sends the specified amount of %full_name% to the specified nickname'
+    - 'terms - displays terms and conditions for using %nick%'
+  terms:
+    - 'There are no fees to use %nick%, with the exception of %withdrawal_fee%%short_name% fee on withdrawals.'
+    - 'In no even shall %nick% be responsible in the event of lost, stolen or misdirected funds.'
