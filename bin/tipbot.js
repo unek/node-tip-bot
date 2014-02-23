@@ -201,7 +201,7 @@ client.addListener('message', function(from, channel, message) {
           return;
         }
         // check balance with min. 5 confirmations
-        coin.getBalance(from, settings.coin.min_confirmations, function(err, balance) {
+        coin.getBalance(from.toLowerCase(), settings.coin.min_confirmations, function(err, balance) {
           if(err) {
             winston.error('Error in !tip command.', err);
             client.say(channel, settings.messages.error.expand({name: from}));
