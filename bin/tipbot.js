@@ -186,7 +186,7 @@ client.addListener('message', function(from, channel, message) {
         var to     = match[1];
         var amount = Number(match[2]);
 
-        if(amount == NaN) {
+        if(isNaN(amount)) {
           client.say(channel, settings.messages.invalid_amount.expand({name: from, amount: match[2]}));
           return;
         }
