@@ -2,12 +2,22 @@ var irc    = require('irc')
 , winston  = require('winston')
 , fs       = require('fs')
 , yaml     = require('js-yaml')
-, coin     = require('node-dogecoin');
+, coin     = require('node-dogecoin')
+, webadmin = require('../lib/webadmin/app');
 
+// check if the config file exists
 if(!fs.existsSync('./config/config.yml')) {
   winston.error('Configuration file doesn\'t exist! Please read the README.md file first.');
   process.exit(1);
 }
+
+// handle sigint
+process.on('exit', function() {
+  winston.info('Exiting...');
+  if(client != null) {
+    client.disconnect('My master ordered me to leave.');
+  }
+});
 
 // load settings
 var settings = yaml.load(fs.readFileSync('./config/config.yml', 'utf-8'));
@@ -42,6 +52,13 @@ coin.getBalance(function(err, balance) {
   var balance = typeof(balance) == 'object' ? balance.result : balance;
   winston.info('Connected to JSON RPC API. Current total balance is %d' + settings.coin.short_name, balance);
 })
+
+// run webadmin
+if(settings.webadmin.enabled)
+{
+  winston.info('Running webadmin on port %d', settings.webadmin.port);
+  webadmin.app(settings.webadmin.port, coin, settings.webadmin, winston);
+}
 
 // connect to the server
 winston.info('Connecting to the server...');

@@ -29,6 +29,12 @@ IRC network connection and login info.
 ## channels
 List of channels to auto-join to.
 
+## webadmin
+Web interface settings.
+* **enabled** - enabled web admin
+* **port** - port to bound to
+* **users** - list of users with access to web interface in `name: password` format
+
 ## log
 Logging settings.
 * **file** - file to log to. Set to `false` to disable logging to file.
@@ -85,3 +91,4 @@ To run the bot simply use `npm start` or `node bin/tipbot`.
 Donations are welcome! If you like my bot and want to donate me, here are my wallet addresses:
 
 * **Dogecoin**: DGLT1pTSKAXLSSSz1NGFgZNLioDyHdaDyA
+* **Flappycoin**: FPEBPCC1sr9FAJ4DbD3r4YFwMqrr9TppeK

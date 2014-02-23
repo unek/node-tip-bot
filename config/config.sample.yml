@@ -25,6 +25,12 @@ coin:
   min_tip: 10
   short_name: Đ
   full_name: dogecoin
+webadmin:
+  enabled: false
+  port: 8080
+  users:
+    unek: 123
+    nix: 456
 commands:
   help:
     pm: true
