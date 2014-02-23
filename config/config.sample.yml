@@ -10,7 +10,6 @@ login:
   realname: node.js dogecoin tipping bot
   nickserv_password: pass
 channels: 
-  - '##unek'
   - '##tipbots'
 log:
   file: tipbot.log
@@ -70,4 +69,4 @@ messages:
     - 'terms - displays terms and conditions for using %nick%'
   terms:
     - 'There are no fees to use %nick%, with the exception of %withdrawal_fee%%short_name% fee on withdrawals.'
-    - 'In no even shall %nick% be responsible in the event of lost, stolen or misdirected funds.'
+    - 'In no event shall %nick% be responsible in the event of lost, stolen or misdirected funds.'
