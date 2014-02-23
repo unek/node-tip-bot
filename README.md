@@ -74,7 +74,7 @@ rpcpassword=<your super secret password>
 rpcallowip=<your bot's ip address or just 127.0.0.1 if hosted on the same machine>
 ```
 
-To run the bot simply use `npm start` or `node bin/tipbot`.
+To run the bot simply use `node bin/tipbot` or `npm start`.
 
 ## Commands
 

@@ -62,6 +62,7 @@ messages:
   invalid_address: 'Sorry %name%, the address you specified is invalid (%address%).'
   tip_too_small: 'Sorry %from%, your tip to %to% (%amount%%short_name%) is too small (min. %min_tip%%short_name%).'
   tip_self: "Sorry %name%, you can't tip yourself!"
+  invalid_amount: 'Sorry %name%, "%amount%" is not a correct amount.'
   withdraw_success: 
     - '%name%: %amount%%short_name% has been withdrawn from your account to %address%'
     - 'You have been charged %withdrawal_fee%%short_name% withdrawal fee.'

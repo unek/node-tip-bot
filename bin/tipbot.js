@@ -178,13 +178,18 @@ client.addListener('message', function(from, channel, message) {
 
     switch(command) {
       case 'tip':
-        var match = message.match(/^.?tip (\S+) (\d+)/);
+        var match = message.match(/^.?tip (\S+) ([\d\.]+)/);
         if(match == null || match < 3) {
           client.say(channel, 'Usage: !tip <nickname> <amount>')
           return;
         }
         var to     = match[1];
         var amount = Number(match[2]);
+
+        if(amount == NaN) {
+          client.say(channel, settings.messages.invalid_amount.expand({name: from, amount: match[2]}));
+          return;
+        }
 
         if(to.toLowerCase() == from.toLowerCase()) {
           client.say(channel, settings.messages.self_tip.expand({name: from}));
