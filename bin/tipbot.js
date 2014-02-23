@@ -4,6 +4,11 @@ var irc    = require('irc')
 , yaml     = require('js-yaml')
 , coin     = require('node-dogecoin');
 
+if(!fs.existsSync('./config/config.yml')) {
+  winston.error('Configuration file doesn\'t exist! Please read the README.md file first.');
+  process.exit(1);
+}
+
 // load settings
 var settings = yaml.load(fs.readFileSync('./config/config.yml', 'utf-8'));
 
@@ -14,7 +19,7 @@ winston.cli();
 if(settings.log.file) {
   winston.add(winston.transports.File, {
     filename: settings.log.file
-  , level: info});
+  , level: 'info'});
 }
 
 // connect to coin json-rpc
@@ -30,7 +35,7 @@ var coin = coin({
 coin.getBalance(function(err, balance) {
   if(err) {
     winston.error('Could not connect to %s RPC API! ', settings.coin.full_name, err);
-    process.exit();
+    process.exit(1);
     return;
   }
 
@@ -49,7 +54,7 @@ var client = new irc.Client(settings.connection.host, settings.login.nickname, {
 , userName: settings.login.username
 , realName: settings.login.realname
 
-, debug: true
+, debug: settings.connection.debug
 });
 
 // gets user's login status

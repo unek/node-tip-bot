@@ -3,6 +3,7 @@ connection:
   port: 6667
   secure: false
   status_command: ACC
+  debug: false
 login: 
   nickname: nodetip
   username: nodetip

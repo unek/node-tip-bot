@@ -10,7 +10,7 @@ npm install
 After installation proceed to the configuration.
 
 # Configuration
-To configure, edit the config/config.yml file.
+To configure, copy the `config/config.sample.yml` file to `config/config.yml`.
 
 ## connection
 IRC network connection info.
