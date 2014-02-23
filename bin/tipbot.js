@@ -153,6 +153,17 @@ client.addListener('message', function(from, channel, message) {
   // if pms, make sure to respond to pms instead to itself
   if(channel == client.nick) channel = from;
 
+  // comands that don't require identifying
+  if(command == 'help' || command == 'help')
+  {
+    for(var i = 0; i < settings.messages[command].length; i++) {
+      var message = settings.messages[command][i];
+      client.say(channel, message.expand({}));
+    }
+
+    return;
+  }
+
   // if not that, message will be undefined for some reason
   // todo: find a fix for that
   var msg = message;
@@ -319,18 +330,6 @@ client.addListener('message', function(from, channel, message) {
             client.say(channel, settings.messages.invalid_address.expand({address: address, name: from}));
           }
         });
-        break;
-      case 'help':
-        for(var i = 0; i < settings.messages.help.length; i++) {
-          var message = settings.messages.help[i];
-          client.say(channel, message.expand({}));
-        }
-        break;
-      case 'terms':
-        for(var i = 0; i < settings.messages.terms.length; i++) {
-          var message = settings.messages.terms[i];
-          client.say(channel, message.expand({}));
-        }
         break;
     }
   });
