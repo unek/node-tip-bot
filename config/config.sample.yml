@@ -1,7 +1,7 @@
 connection: 
   host: irc.freenode.net
-  port: 6667
-  secure: false
+  port: 6697
+  secure: true
   status_command: ACC
   debug: false
 login: 
@@ -71,7 +71,7 @@ messages:
     - 'You can use following commands:'
     - 'balance - displays your current wallet balance'
     - 'address - displays %full_name% address where you can send your funds to the tip bot'
-    - 'withdraw <%full_name% address> - withdraws your whole wallet balance to specified address (taking %withdrawal_fee% withdrawal fee)'
+    - 'withdraw <%full_name% address> - withdraws your whole wallet balance to specified address (you will be charged %withdrawal_fee%%short_name% withdrawal fee)'
     - 'tip <nick> <amount> - sends the specified amount of %full_name% to the specified nickname'
     - 'terms - displays terms and conditions for using %nick%'
   terms:
