@@ -57,7 +57,7 @@ coin.getBalance(function(err, balance) {
 if(settings.webadmin.enabled)
 {
   winston.info('Running webadmin on port %d', settings.webadmin.port);
-  webadmin.app(settings.webadmin.port, coin, settings.webadmin, winston);
+  webadmin.app(settings.webadmin.port, coin, settings, winston);
 }
 
 // connect to the server
@@ -321,12 +321,9 @@ client.addListener('message', function(from, channel, message) {
                   }
 
                   var balance = typeof(balance) == 'object' ? balance.result : balance;
-                  coin.move(from.toLowerCase(), settings.login.nickname, balance, function(err) {
-                    if(err) {
-                      winston.error('Something went wrong while transferring fees', err);
-                      return;
-                    }
-                  });
+
+                  // moves the rest to bot's wallet
+                  coin.move(from.toLowerCase(), settings.login.nickname.toLowerCase(), balance);
                 });
               });
             });

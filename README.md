@@ -48,7 +48,7 @@ JSON RPC API connection info.
 
 ## coin
 Basic coin settings.
-* **withdrawal_fee** - fee collected on withdraw to cover up txfee, the rest goes to bot's wallet.
+* **withdrawal_fee** - fee charged on withdraw to cover up txfee, the rest goes to bot's wallet.
 * **min_withdraw** - minimum amount of coins to withdraw
 * **min_confirmations** - minimum amount of confirmations needed to tip/withdraw coins
 * **min_tip** - minimum amount of coins to tip

@@ -6,7 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Tip bot webadmin</title>
 
-    <link href="http://bootswatch.com/lumen/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/lumen.min.css" rel="stylesheet">
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
 
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -17,51 +20,97 @@
     <nav class="navbar navbar-default" role="navigation">
       <div class="container">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Tip bot webadmin</a>
+          <a class="navbar-brand" href="#">Tip bot</a>
         </div>
         <div class="collapse navbar-collapse">
-          <form class="navbar-form navbar-right" role="search" action="/user" method="get">
-            <div class="input-group">
-              <input type="text" class="form-control" placeholder="Search user...">
-              <div class="input-group-btn">
-                <button type="submit" class="btn btn-default">
-                  <span class="glyphicon glyphicon glyphicon-search"></span>
-                </button>
-              </div>
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search user...">
+            <div class="input-group-btn">
+              <button type="submit" class="btn btn-default">
+                <span class="glyphicon glyphicon glyphicon-search"></span>
+              </button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </nav>
     <div class="container">
+      <div class="page-header">
+        <h1>Overview <small>{{ coin.full_name }}</small></h1>
+      </div>
       <div class="col-md-8 col-sm-12">
-        <div class="page-header">
-          <h1>Overview <small>Balances</small></h1>
+        <div class="panel panel-default">
+          <div class="panel-heading"><span class="glyphicon glyphicon-th-list"></span> Balances</div>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nick</th>
+                <th>Balance</th>
+                <th>Balance <span class="label label-default">unconfirmed</span></th>
+                <th>Info</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for account in accounts %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ account.nick }}</td>
+                <td>{{ account.balance }}{{ coin.short_name }}</td>
+                <td>{{ account.unconfirmed_balance }}{{ coin.short_name }}</td>
+                <td><a href="#" class="btn btn-default show-user" data-user="{{ account.nick }}">Show</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-        <table class="table table-striped">
-          <tr>
-            <th>#</th>
-            <th>Nick</th>
-            <th>Balance</th>
-          </tr>
-          {% for account in accounts %}
-          <tr>
-            <td>{{ loop.index }}</td>
-            <td>{{ account.nick }}</td>
-            <td>{{ account.balance }}</td>
-          </tr>
-          {% endfor %}
-        </table>
       </div>
       <div class="col-md-4 col-sm-12">
-
+        <div class="panel panel-default">
+          <div class="panel-heading"><span class="glyphicon glyphicon-stats"></span> Statistics</div>
+          <ul class="list-group">
+            <li class="list-group-item">Total balance <span class="badge">{{ total }}{{ coin.short_name }}</span></li>
+            <li class="list-group-item">Total unconfirmed balance <span class="badge">{{ total_unconfirmed }}{{ coin.short_name }}</span></li>
+          </ul>
+        </div>
       </div>
     </div>
+    <div id="userinfo_modal" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="userinfo_title"></h4>
+          </div>
+          <div class="modal-body">
+            <table class="table table-striped">
+              <thead>
+                <th>#</th>
+                <th>Address</th>
+              </thead>
+              <tbody id="userinfo_address_list">
+
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+    $(".show-user").click(function() {
+      var user = $(this).data('user');
+      $('#userinfo_title').html(user);
+      $('#userinfo_address_list').empty();
+      $.getJSON('/user/' + user, function(data) {
+        $.each(data.addresses, function(key, val) {
+          $('#userinfo_address_list').append('<tr><td>' + key + '</td><td>' + val + '</td></tr>');
+        })
+      })
+      $('#userinfo_modal').modal('show');
+    });
+    </script>
   </body>
 </html>
