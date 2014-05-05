@@ -219,7 +219,7 @@ client.addListener('message', function(from, channel, message) {
 
 
               if(amount / max < settings.coin.min_rain) {
-                client.say(channel, settings.messages.rain_too_small.expand({from: from, amount: amount}));
+                client.say(channel, settings.messages.rain_too_small.expand({from: from, amount: amount, min_rain: settings.coin.min_rain * max}));
                 return;
               }
 
