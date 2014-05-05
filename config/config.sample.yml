@@ -23,7 +23,7 @@ coin:
   min_withdraw: 5
   min_confirmations: 3
   min_tip: 10
-  min_rain: 100
+  min_rain: 1
   short_name: Đ
   full_name: dogecoin
 webadmin:

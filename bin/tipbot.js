@@ -152,10 +152,12 @@ client.addListener('message', function(from, channel, message) {
   // comands that don't require identifying
   if(command == 'help' || command == 'terms')
   {
+    var msg = [];
     for(var i = 0; i < settings.messages[command].length; i++) {
-      var message = settings.messages[command][i];
-      client.say(channel, message.expand({}));
+      msg.push(settings.messages[command][i].expand({}));
     }
+
+    client.say(msg.join(', '));
 
     return;
   }
@@ -196,11 +198,6 @@ client.addListener('message', function(from, channel, message) {
           max = Math.floor(max);
         }
 
-        if(amount < settings.coin.min_rain) {
-          client.say(channel, settings.messages.rain_too_small.expand({from: from, amount: amount}));
-          return;
-        }
-
         coin.getBalance(from.toLowerCase(), settings.coin.min_confirmations, function(err, balance) {
           if(err) {
             winston.error('Error in !tip command.', err);
@@ -220,6 +217,12 @@ client.addListener('message', function(from, channel, message) {
               if(max == 0) return;
               names = names.slice(0, max);
 
+
+              if(amount / max < settings.coin.min_rain) {
+                client.say(channel, settings.messages.rain_too_small.expand({from: from, amount: amount}));
+                return;
+              }
+
               for (var i = 0; i < names.length; i++) {
                 coin.move(from.toLowerCase(), names[i].toLowerCase(), amount / max, function(err, reply) {
                   if(err || !reply) {
@@ -229,7 +232,7 @@ client.addListener('message', function(from, channel, message) {
                 });
               }
 
-              client.say(channel, settings.messages.rain.expand({name: from, amount: (amount / max).toFixed(3), list: names.join(', ')}));
+              client.say(channel, settings.messages.rain.expand({name: from, amount: amount / max, list: names.join(', ')}));
             });
           } else {
             winston.info('%s tried to tip %s %d, but has only %d', from, to, amount, balance);
