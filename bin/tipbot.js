@@ -196,8 +196,8 @@ client.addListener('message', function(from, channel, message) {
           max = Math.floor(max);
         }
 
-        if(amount < settings.coin.min_tip) {
-          client.say(channel, settings.messages.tip_too_small.expand({from: from, to: to, amount: amount}));
+        if(amount < settings.coin.min_rain) {
+          client.say(channel, settings.messages.rain_too_small.expand({from: from, amount: amount}));
           return;
         }
 

@@ -23,6 +23,7 @@ coin:
   min_withdraw: 5
   min_confirmations: 3
   min_tip: 10
+  min_rain: 100
   short_name: Đ
   full_name: dogecoin
 webadmin:
@@ -64,6 +65,7 @@ messages:
   withdraw_too_small: 'Sorry %name%, you need to withdraw at least %min_withdraw%%short_name% (you have %balance%%short_name%)'
   invalid_address: 'Sorry %name%, the address you specified is invalid (%address%).'
   tip_too_small: 'Sorry %from%, your tip to %to% (%amount%%short_name%) is too small (min. %min_tip%%short_name%).'
+  rain_too_small: 'Sorry %from%, your rain (%amount%%short_name%) is too small (min. %min_rain%%short_name%).'
   tip_self: "Sorry %name%, you can't tip yourself!"
   invalid_amount: 'Sorry %name%, "%amount%" is not a correct amount.'
   rain: '%name% rained %amount%%short_name% upon %list%.'
