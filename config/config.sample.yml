@@ -50,6 +50,9 @@ commands:
   terms:
     pm: true
     channel: false
+  rain:
+    pm: false
+    channel: true
 messages:
   error: 'Sorry %name%, something went wrong.'
   no_funds: "Sorry %name%, you don't have enough funds (you're %short%%short_name% short)"

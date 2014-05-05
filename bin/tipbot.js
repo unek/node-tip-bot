@@ -76,14 +76,19 @@ var client = new irc.Client(settings.connection.host, settings.login.nickname, {
 
 // gets user's login status
 irc.Client.prototype.isIdentified = function(nickname, callback) {
-  this.whois(nick, function(reply) {
+  this.whois(nickname, function(reply) {
     callback(!!reply.account);
   });
 }
 
 irc.Client.prototype.getNames = function(channel, callback) {
+  client.send('NAMES', channel);
   var listener = function(nicks) {
-    callback(nicks);
+    var names = [];
+    for(name in nicks) {
+      names.push(name);
+    }
+    callback(names);
     this.removeListener('names' + channel, listener);
   }
 
@@ -169,8 +174,8 @@ client.addListener('message', function(from, channel, message) {
 
     switch(command) {
       case 'rain':
-        var match = message.match(/^.?tip ([\d\.]+) ?(\d+)?/);
-        if(match == null || match.length < 2) {
+        var match = message.match(/^.?rain ([\d\.]+) ?(\d+)?/);
+        if(match == null || !match[1]) {
           client.say(channel, 'Usage: !rain <amount> [max people]');
           return;
         }
@@ -181,6 +186,14 @@ client.addListener('message', function(from, channel, message) {
         if(isNaN(amount)) {
           client.say(channel, settings.messages.invalid_amount.expand({name: from, amount: match[2]}));
           return;
+        }
+
+        if(isNaN(max) || max < 1) {
+          max = false;
+        }
+        else
+        {
+          max = Math.floor(max);
         }
 
         if(amount < settings.coin.min_tip) {
@@ -203,9 +216,9 @@ client.addListener('message', function(from, channel, message) {
               // shuffle the array
               for(var j, x, i = names.length; i; j = Math.floor(Math.random() * i), x = names[--i], names[i] = names[j], names[j] = x);
 
-              var max = max ? Math.min(max, names.length) : names.length;
+              max = max ? Math.min(max, names.length) : names.length;
               if(max == 0) return;
-              var names = names.split(0, max);
+              names = names.slice(0, max);
 
               for (var i = 0; i < names.length; i++) {
                 coin.move(from.toLowerCase(), names[i].toLowerCase(), amount / max, function(err, reply) {
@@ -216,7 +229,7 @@ client.addListener('message', function(from, channel, message) {
                 });
               }
 
-              client.say(channel, settings.messages.rain.expand({name: from, amount: amount / max, list: names.join(', ')}));
+              client.say(channel, settings.messages.rain.expand({name: from, amount: (amount / max).toFixed(3), list: names.join(', ')}));
             });
           } else {
             winston.info('%s tried to tip %s %d, but has only %d', from, to, amount, balance);
