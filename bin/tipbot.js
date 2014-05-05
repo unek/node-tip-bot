@@ -76,9 +76,18 @@ var client = new irc.Client(settings.connection.host, settings.login.nickname, {
 
 // gets user's login status
 irc.Client.prototype.isIdentified = function(nickname, callback) {
-  client.whois(nick, function(reply) {
+  this.whois(nick, function(reply) {
     callback(!!reply.account);
   });
+}
+
+irc.Client.prototype.getNames = function(channel, callback) {
+  var listener = function(nicks) {
+    callback(nicks);
+    this.removeListener('names' + channel, listener);
+  }
+
+  this.addListener('names' + channel, listener);
 }
 
 // gets a empty coin address
@@ -159,9 +168,65 @@ client.addListener('message', function(from, channel, message) {
     }
 
     switch(command) {
+      case 'rain':
+        var match = message.match(/^.?tip ([\d\.]+) ?(\d+)?/);
+        if(match == null || match.length < 2) {
+          client.say(channel, 'Usage: !rain <amount> [max people]');
+          return;
+        }
+
+        var amount = Number(match[1]);
+        var max    = Number(match[2]);
+
+        if(isNaN(amount)) {
+          client.say(channel, settings.messages.invalid_amount.expand({name: from, amount: match[2]}));
+          return;
+        }
+
+        if(amount < settings.coin.min_tip) {
+          client.say(channel, settings.messages.tip_too_small.expand({from: from, to: to, amount: amount}));
+          return;
+        }
+
+        coin.getBalance(from.toLowerCase(), settings.coin.min_confirmations, function(err, balance) {
+          if(err) {
+            winston.error('Error in !tip command.', err);
+            client.say(channel, settings.messages.error.expand({name: from}));
+            return;
+          }
+          var balance = typeof(balance) == 'object' ? balance.result : balance;
+
+          if(balance >= amount) {
+            client.getNames(channel, function(names) {
+              // remove tipper from the list
+              names.splice(names.indexOf(from), 1);
+              // shuffle the array
+              for(var j, x, i = names.length; i; j = Math.floor(Math.random() * i), x = names[--i], names[i] = names[j], names[j] = x);
+
+              var max = max ? Math.min(max, names.length) : names.length;
+              if(max == 0) return;
+              var names = names.split(0, max);
+
+              for (var i = 0; i < names.length; i++) {
+                coin.move(from.toLowerCase(), names[i].toLowerCase(), amount / max, function(err, reply) {
+                  if(err || !reply) {
+                    winston.error('Error in !tip command', err);
+                    return;
+                  }
+                });
+              }
+
+              client.say(channel, settings.messages.rain.expand({name: from, amount: amount / max, list: names.join(', ')}));
+            });
+          } else {
+            winston.info('%s tried to tip %s %d, but has only %d', from, to, amount, balance);
+            client.say(channel, settings.messages.no_funds.expand({name: from, balance: balance, short: amount - balance, amount: amount}));
+          }
+        })
+        break;
       case 'tip':
         var match = message.match(/^.?tip (\S+) ([\d\.]+)/);
-        if(match == null || match < 3) {
+        if(match == null || match.length < 3) {
           client.say(channel, 'Usage: !tip <nickname> <amount>')
           return;
         }
@@ -192,23 +257,15 @@ client.addListener('message', function(from, channel, message) {
           var balance = typeof(balance) == 'object' ? balance.result : balance;
 
           if(balance >= amount) {
-            client.getAddress(to, function(err, to_address) { // get the address to actually create a new one
-              if(err) {
+            coin.send('move', from.toLowerCase(), to.toLowerCase(), amount, function(err, reply) {
+              if(err || !reply) {
                 winston.error('Error in !tip command', err);
                 client.say(channel, settings.messages.error.expand({name: from}));
                 return;
               }
 
-              coin.send('move', from.toLowerCase(), to.toLowerCase(), amount, function(err, reply) {
-                if(err || !reply) {
-                  winston.error('Error in !tip command', err);
-                  client.say(channel, settings.messages.error.expand({name: from}));
-                  return;
-                }
-
-                winston.info('%s tipped %s %d%s', from, to, amount, settings.coin.short_name)
-                client.say(channel, settings.messages.tipped.expand({from: from, to: to, amount: amount}));
-              });
+              winston.info('%s tipped %s %d%s', from, to, amount, settings.coin.short_name)
+              client.say(channel, settings.messages.tipped.expand({from: from, to: to, amount: amount}));
             });
           } else {
             winston.info('%s tried to tip %s %d, but has only %d', from, to, amount, balance);

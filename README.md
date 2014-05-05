@@ -86,10 +86,11 @@ To run the bot simply use `node bin/tipbot` or `npm start`.
 | `tip`       | `<nick> <amount>` | sends the specified amount of coins to the specified nickname
 | `help`      |                   | displays configured help message (by default similiar to this one)
 | `terms`     |                   | displays terms and conditions for using the tip bot
+| `rain`      | <amount> [max]    | splits `amount` coins between `max` users on the channel
 
 ## Donations
 Donations are welcome! If you like my bot and want to donate me, here are my wallet addresses:
 
+* **Bitcoin**: 1G7T2JNDnbxo3txFWZSuV5oYq8qwtSEg51
 * **Dogecoin**: DGLT1pTSKAXLSSSz1NGFgZNLioDyHdaDyA
-* **Flappycoin**: FPEBPCC1sr9FAJ4DbD3r4YFwMqrr9TppeK
-* **Mintcoin**: MmfHmeWGUbzzd4he4u9yXRu5tQGLs1QNDL
+
