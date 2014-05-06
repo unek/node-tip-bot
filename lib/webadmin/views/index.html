@@ -87,6 +87,7 @@
               <thead>
                 <th>#</th>
                 <th>Address</th>
+                <th>Total deposited</th>
               </thead>
               <tbody id="userinfo_address_list">
 
@@ -106,9 +107,14 @@
       $('#userinfo_address_list').empty();
       $.getJSON('/user/' + user, function(data) {
         $.each(data.addresses, function(key, val) {
-          $('#userinfo_address_list').append('<tr><td>' + key + '</td><td>' + val + '</td></tr>');
-        })
-      })
+          $('#userinfo_address_list').append('
+            <tr>
+              <td>' + (key + 1) + '</td>
+              <td>' + val.address + '</td>
+              <td>' + val.amount + '</td>
+            </tr>');
+        });
+      });
       $('#userinfo_modal').modal('show');
     });
     </script>
