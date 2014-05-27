@@ -260,17 +260,24 @@ client.addListener('message', function(from, channel, message) {
         })
         break;
       case 'tip':
-        var match = message.match(/^.?tip (\S+) ([\d\.]+)/);
+        var match = message.match(/^.?tip (\S+) (random)?([\d\.]+)/);
         if(match == null || match.length < 3) {
           client.say(channel, 'Usage: !tip <nickname> <amount>')
           return;
         }
         var to     = match[1];
+        var random = match[2];
         var amount = Number(match[2]);
 
         if(isNaN(amount)) {
-          client.say(channel, settings.messages.invalid_amount.expand({name: from, amount: match[2]}));
+          client.say(channel, settings.messages.invalid_amount.expand({name: from, amount: match[3]}));
           return;
+        }
+
+        if(random) {
+          var min = settings.coin.min_tip;
+          var max = amount;
+          amount  = Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
         if(to.toLowerCase() == from.toLowerCase()) {
