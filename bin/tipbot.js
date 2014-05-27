@@ -194,18 +194,25 @@ client.addListener('message', function(from, channel, message) {
 
     switch(command) {
       case 'rain':
-        var match = message.match(/^.?rain ([\d\.]+) ?(\d+)?/);
-        if(match == null || !match[1]) {
+        var match = message.match(/^.?rain (random)?([\d\.]+) ?(\d+)?/);
+        if(match == null || !match[2]) {
           client.say(channel, 'Usage: !rain <amount> [max people]');
           return;
         }
 
-        var amount = Number(match[1]);
-        var max    = Number(match[2]);
+        var random = match[1];
+        var amount = Number(match[2]);
+        var max    = Number(match[3]);
 
         if(isNaN(amount)) {
           client.say(channel, settings.messages.invalid_amount.expand({name: from, amount: match[2]}));
           return;
+        }
+
+        if(random) {
+          var min = settings.coin.min_rain;
+          var maxAmount = amount;
+          amount  = Math.floor(Math.random() * (maxAmount - min + 1)) + min;
         }
 
         if(isNaN(max) || max < 1) {
