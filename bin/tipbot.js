@@ -168,15 +168,11 @@ client.addListener('message', function(from, channel, message) {
   if(channel == client.nick) channel = from;
 
   // comands that don't require identifying
-  if(command == 'help' || command == 'terms')
-  {
+  if(command == 'help' || command == 'terms') {
     var msg = [];
     for(var i = 0; i < settings.messages[command].length; i++) {
-      msg.push(settings.messages[command][i].expand({}));
+      client.say(from, settings.messages[command][i].expand({}));
     }
-
-    client.say(from, msg.join(', '));
-
     return;
   }
 
@@ -217,13 +213,11 @@ client.addListener('message', function(from, channel, message) {
 
         if(isNaN(max) || max < 1) {
           max = false;
-        }
-        else
-        {
+        } else {
           max = Math.floor(max);
         }
 
-        coin.getBalance(from.toLowerCase(), settings.coin.min_confirmations, function(err, balance) {
+        coin.getBalance(settings.rpc.prefix + from.toLowerCase(), settings.coin.min_confirmations, function(err, balance) {
           if(err) {
             winston.error('Error in !tip command.', err);
             client.say(channel, settings.messages.error.expand({name: from}));
@@ -250,7 +244,7 @@ client.addListener('message', function(from, channel, message) {
               }
 
               for (var i = 0; i < names.length; i++) {
-                coin.move(from.toLowerCase(), names[i].toLowerCase(), amount / max, function(err, reply) {
+                coin.move(settings.rpc.prefix + from.toLowerCase(), settings.rpc.prefix + names[i].toLowerCase(), amount / max, function(err, reply) {
                   if(err || !reply) {
                     winston.error('Error in !tip command', err);
                     return;
@@ -297,7 +291,7 @@ client.addListener('message', function(from, channel, message) {
           return;
         }
         // check balance with min. 5 confirmations
-        coin.getBalance(from.toLowerCase(), settings.coin.min_confirmations, function(err, balance) {
+        coin.getBalance(settings.rpc.prefix + from.toLowerCase(), settings.coin.min_confirmations, function(err, balance) {
           if(err) {
             winston.error('Error in !tip command.', err);
             client.say(channel, settings.messages.error.expand({name: from}));
@@ -306,7 +300,7 @@ client.addListener('message', function(from, channel, message) {
           var balance = typeof(balance) == 'object' ? balance.result : balance;
 
           if(balance >= amount) {
-            coin.send('move', from.toLowerCase(), to.toLowerCase(), amount, function(err, reply) {
+            coin.send('move', settings.rpc.prefix + from.toLowerCase(), settings.rpc.prefix + to.toLowerCase(), amount, function(err, reply) {
               if(err || !reply) {
                 winston.error('Error in !tip command', err);
                 client.say(channel, settings.messages.error.expand({name: from}));
@@ -336,7 +330,7 @@ client.addListener('message', function(from, channel, message) {
         break;
       case 'balance':
         var user = from.toLowerCase();
-        coin.getBalance(user, settings.coin.min_confirmations, function(err, balance) {
+        coin.getBalance(settings.rpc.prefix + user, settings.coin.min_confirmations, function(err, balance) {
           if(err) {
             winston.error('Error in !balance command', err);
             client.say(channel, settings.messages.error.expand({name: from}));
@@ -345,7 +339,7 @@ client.addListener('message', function(from, channel, message) {
 
           var balance = typeof(balance) == 'object' ? balance.result : balance;
 
-          coin.getBalance(user, 0, function(err, unconfirmed_balance) {
+          coin.getBalance(settings.rpc.prefix + user, 0, function(err, unconfirmed_balance) {
           if(err) {
               winston.error('Error in !balance command', err);
               client.say(channel, settings.messages.balance.expand({balance: balance, name: user}));
@@ -374,7 +368,7 @@ client.addListener('message', function(from, channel, message) {
           }
 
           if(reply.isvalid) {
-            coin.getBalance(from.toLowerCase(), settings.coin.min_confirmations, function(err, balance) {
+            coin.getBalance(settings.rpc.prefix + from.toLowerCase(), settings.coin.min_confirmations, function(err, balance) {
               if(err) {
                 winston.error('Error in !withdraw command', err);
                 client.say(channel, settings.messages.error.expand({name: from}));
@@ -388,7 +382,7 @@ client.addListener('message', function(from, channel, message) {
                 return;
               }
 
-              coin.sendFrom(from.toLowerCase(), address, balance - settings.coin.withdrawal_fee, function(err, reply) {
+              coin.sendFrom(settings.rpc.prefix + from.toLowerCase(), address, balance - settings.coin.withdrawal_fee, function(err, reply) {
                 if(err) {
                   winston.error('Error in !withdraw command', err);
                   client.say(channel, settings.messages.error.expand({name: from}));
@@ -402,7 +396,7 @@ client.addListener('message', function(from, channel, message) {
                 };
 
                 // transfer the rest (usually withdrawal fee - txfee) to bots wallet
-                coin.getBalance(from.toLowerCase(), function(err, balance) {
+                coin.getBalance(settings.rpc.prefix + from.toLowerCase(), function(err, balance) {
                   if(err) {
                     winston.error('Something went wrong while transferring fees', err);
                     return;
@@ -411,7 +405,7 @@ client.addListener('message', function(from, channel, message) {
                   var balance = typeof(balance) == 'object' ? balance.result : balance;
 
                   // moves the rest to bot's wallet
-                  coin.move(from.toLowerCase(), settings.login.nickname.toLowerCase(), balance);
+                  coin.move(settings.rpc.prefix + from.toLowerCase(), settings.rpc.prefix + settings.login.nickname.toLowerCase(), balance);
                 });
               });
             });
