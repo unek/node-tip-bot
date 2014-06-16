@@ -113,10 +113,9 @@ irc.Client.prototype.getNames = function(channel, callback) {
   this.addListener('names' + channel, listener);
 }
 
-// gets a empty coin address
 irc.Client.prototype.getAddress = function(nickname, callback) {
   winston.debug('Requesting address for %s', nickname);
-  coin.send('getaccountaddress', nickname.toLowerCase(), function(err, address) {
+  coin.send('getaccountaddress', settings.rpc.prefix + nickname.toLowerCase(), function(err, address) {
     if(err) {
       winston.error('Something went wrong while getting address. ' + err);
       callback(err);
