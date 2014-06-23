@@ -94,3 +94,4 @@ Donations are welcome! If you like my bot and want to donate me, here are my wal
 * **Bitcoin**: 1G7T2JNDnbxo3txFWZSuV5oYq8qwtSEg51
 * **Dogecoin**: DGLT1pTSKAXLSSSz1NGFgZNLioDyHdaDyA
 
+or just tip me (unek) on freenode in your freshly installed tipbot :smile:
