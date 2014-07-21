@@ -228,6 +228,30 @@ client.addListener('message', function(from, channel, message) {
             client.getNames(channel, function(names) {
               // remove tipper from the list
               names.splice(names.indexOf(from), 1);
+              // throw out potential doubled nicks such as "user_" or "user|afk"
+              // when "user" and "user_" are in the channel
+              var check, index, name, trimmed, _i, _j, _len, _len1;
+              trimmed = names.slice(0);
+              names.sort(function(a, b) {
+                return a.length - b.length;
+              });
+              for (_i = 0, _len = names.length; _i < _len; _i++) {
+                name = names[_i];
+                for (_j = 0, _len1 = names.length; _j < _len1; _j++) {
+                  check = names[_j];
+                  if (check === name) {
+                    continue;
+                  }
+                  if (name.indexOf(check) !== 0) {
+                    continue;
+                  }
+                  index = trimmed.indexOf(name);
+                  if (index !== -1) {
+                    trimmed.splice(index, 1);
+                  }
+                }
+              }
+              names = trimmed;
               // shuffle the array
               for(var j, x, i = names.length; i; j = Math.floor(Math.random() * i), x = names[--i], names[i] = names[j], names[j] = x);
 
