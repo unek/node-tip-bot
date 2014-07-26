@@ -67,7 +67,6 @@ var client = new irc.Client(settings.connection.host, settings.login.nickname, {
   port:   settings.connection.port, 
   secure: settings.connection.secure, 
 
-  channels: settings.channels,
   userName: settings.login.username,
   realName: settings.login.realname,
 
@@ -426,4 +425,14 @@ client.addListener('message', function(from, channel, message) {
         break;
     }
   });
+});
+client.addListener('notice', function(nick, to, text, message) {
+  if(nick && nick.toLowerCase() == 'nickserv') {
+    winston.info('%s: %s', nick, text);
+    if(text.match(/^You are now identified/)) {
+      for (var i = settings.channels.length - 1; i >= 0; i--) {
+        client.join(settings.channels[i]);
+      };
+    }
+  }
 });
