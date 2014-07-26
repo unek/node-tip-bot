@@ -17,20 +17,21 @@ rpc:
   port: 22555
   user: dogecoinrpc
   pass: pass
-  prefix: ''
 coin:
-  withdrawal_fee: 2
+  withdrawal_fee: 1
   min_withdraw: 5
-  min_confirmations: 3
+  min_confirmations: 5
   min_tip: 10
   min_rain: 1
-  short_name: Đ
-  full_name: dogecoin
+  prefix: Đ
+  suffix: ''
+  full_name: dogecoin 
 webadmin:
   enabled: false
   port: 8080
   users:
-    unek: 123
+    unek: supersecretpassword
+    admintwo: password
 commands:
   help:
     pm: true
@@ -53,6 +54,7 @@ commands:
   rain:
     pm: false
     channel: true
+    rain_on_last_active: 0 # amount in seconds. rain tips will fall only on users active within x seconds. leave 0 for no such behavior.
 messages:
   error: 'Sorry %name%, something went wrong.'
   no_funds: "Sorry %name%, you don't have enough funds (you're %short%%short_name% short)"

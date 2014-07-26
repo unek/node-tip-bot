@@ -1,9 +1,9 @@
-var irc    = require('irc')
-, winston  = require('winston')
-, fs       = require('fs')
-, yaml     = require('js-yaml')
-, coin     = require('node-dogecoin')
-, webadmin = require('../lib/webadmin/app');
+var irc    = require('irc'),
+  winston  = require('winston'),
+  fs       = require('fs'),
+  yaml     = require('js-yaml'),
+  coin     = require('node-dogecoin'),
+  webadmin = require('../lib/webadmin/app');
 
 // check if the config file exists
 if(!fs.existsSync('./config/config.yml')) {
@@ -28,18 +28,18 @@ winston.cli();
 // write logs to file
 if(settings.log.file) {
   winston.add(winston.transports.File, {
-    filename: settings.log.file
-  , level: 'info'});
+    filename: settings.log.file, 
+    level: 'info'});
 }
 
 // connect to coin json-rpc
 winston.info('Connecting to coind...');
 
 var coin = coin({
-  host: settings.rpc.host
-, port: settings.rpc.port
-, user: settings.rpc.user
-, pass: settings.rpc.pass
+  host: settings.rpc.host,
+  port: settings.rpc.port,
+  user: settings.rpc.user,
+  pass: settings.rpc.pass
 });
 
 coin.getBalance(function(err, balance) {
@@ -64,14 +64,14 @@ if(settings.webadmin.enabled)
 winston.info('Connecting to the server...');
 
 var client = new irc.Client(settings.connection.host, settings.login.nickname, {
-  port:   settings.connection.port
-, secure: settings.connection.secure
+  port:   settings.connection.port, 
+  secure: settings.connection.secure, 
 
-, channels: settings.channels
-, userName: settings.login.username
-, realName: settings.login.realname
+  channels: settings.channels,
+  userName: settings.login.username,
+  realName: settings.login.realname,
 
-, debug: settings.connection.debug
+  debug: settings.connection.debug
 });
 
 // gets user's login status
@@ -150,7 +150,9 @@ client.addListener('error', function(message) {
   winston.error('Received an error from IRC network: ', message);
 });
 
+var last_active = {};
 client.addListener('message', function(from, channel, message) {
+  last_active[from] = Date.now();
   var match = message.match(/^(!?)(\S+)/);
   if(match == null) return;
   var prefix  = match[1];
@@ -226,6 +228,14 @@ client.addListener('message', function(from, channel, message) {
 
           if(balance >= amount) {
             client.getNames(channel, function(names) {
+              // rain only on nicknames active within the last x seconds
+              if(settings.commands.rain.rain_on_last_active) {
+                for (var i = names.length - 1; i >= 0; i--) {
+                  if(!last_active.hasOwnProperty(names[i]) || last_active[names[i]] + settings.commands.rain.rain_on_last_active * 1000 < Date.now()) {
+                    names.splice(i, 1);
+                  }
+                };
+              }
               // remove tipper from the list
               names.splice(names.indexOf(from), 1);
               // shuffle the array
@@ -394,7 +404,7 @@ client.addListener('message', function(from, channel, message) {
                   client.say(channel, msg.expand(values));
                 };
 
-                // transfer the rest (usually withdrawal fee - txfee) to bots wallet
+                // transfer the rest (withdrawal fee - txfee) to bots wallet
                 coin.getBalance(settings.rpc.prefix + from.toLowerCase(), function(err, balance) {
                   if(err) {
                     winston.error('Something went wrong while transferring fees', err);
