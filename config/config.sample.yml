@@ -23,8 +23,7 @@ coin:
   min_confirmations: 5
   min_tip: 10
   min_rain: 1
-  prefix: Đ
-  suffix: ''
+  short_name: ' DOGE'
   full_name: dogecoin 
 webadmin:
   enabled: false
