@@ -427,7 +427,7 @@ client.addListener('message', function(from, channel, message) {
   });
 });
 client.addListener('notice', function(nick, to, text, message) {
-  if(nick && nick.toLowerCase() == 'nickserv') {
+  if(nick && nick.toLowerCase() == 'nickserv' && !text.match(/ ACC /)) {
     winston.info('%s: %s', nick, text);
     if(text.match(/^You are now identified/)) {
       for (var i = settings.channels.length - 1; i >= 0; i--) {
