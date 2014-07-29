@@ -29,7 +29,7 @@ winston.cli();
 if(settings.log.file) {
   winston.add(winston.transports.File, {
     filename: settings.log.file, 
-    level: 'info'});
+    level: 'debug'});
 }
 
 // connect to coin json-rpc
