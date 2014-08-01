@@ -12,6 +12,9 @@ channels:
   - '##tipbots'
 log:
   file: tipbot.log
+cryptsy:
+  key: API_KEY_HERE
+  secret: API_SECRET_HERE
 rpc:
   host: localhost
   port: 22555
@@ -50,11 +53,15 @@ commands:
   terms:
     pm: true
     channel: false
+  price:
+    pm: true
+    channel: true
   rain:
     pm: false
     channel: true
     rain_on_last_active: 0 # amount in seconds. rain tips will fall only on users active within x seconds. leave 0 for no such behavior.
 messages:
+  price: 'MYR is current priced at %amount% BTC on cryptsy'
   error: 'Sorry %name%, something went wrong.'
   no_funds: "Sorry %name%, you don't have enough funds (you're %short%%short_name% short)"
   not_identified: '%name%: You need to be identified with NickServ to tip.'
