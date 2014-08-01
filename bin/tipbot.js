@@ -280,15 +280,9 @@ client.addListener('message', function(from, channel, message) {
           return;
         }
         winston.info('Fetched MYR Price From Cryptsy')
-        client.say(channel, settings.messages.tipped.expand({amount: data}));
+        client.say(channel, settings.messages.price.expand({amount: data}));
         });
- coin.getBalance(settings.rpc.prefix + from.toLowerCase(), settings.coin.min_confirmations, function(err, balance) {
-          if(err) {
-            winston.error('Error in !tip command.', err);
-            client.say(channel, settings.messages.error.expand({name: from}));
-            return;
-          }
-          
+        break;
       case 'tip':
         var match = message.match(/^.?tip (\S+) (random)?([\d\.]+)/);
         if(match == null || match.length < 3) {
