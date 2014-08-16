@@ -260,7 +260,7 @@ client.addListener('message', function(from, channel, message) {
                 });
               }
 
-              client.say(channel, settings.messages.rain.expand({name: from, amount: amount / max, list: (whole_channel && !settings.commands.rain.rain_on_last_active) ? 'the whole channel' : names.join(', ')}));
+              client.say(channel, settings.messages.rain.expand({name: from, amount: parseFloat((amount / max).toFixed(8)), list: (whole_channel && !settings.commands.rain.rain_on_last_active) ? 'the whole channel' : names.join(', ')}));
             });
           } else {
             winston.info('%s tried to tip %s %d, but has only %d', from, to, amount, balance);
