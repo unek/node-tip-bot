@@ -17,6 +17,7 @@ rpc:
   port: 22555
   user: dogecoinrpc
   pass: pass
+  prefix: ''
 coin:
   withdrawal_fee: 1
   min_withdraw: 5
