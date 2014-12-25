@@ -150,6 +150,7 @@ client.addListener('error', function(message) {
 });
 
 var last_active = {};
+var locks       = [];
 client.addListener('message', function(from, channel, message) {
   last_active[from] = Date.now();
   var match = message.match(/^(!?)(\S+)/);
@@ -217,8 +218,13 @@ client.addListener('message', function(from, channel, message) {
           max = Math.floor(max);
         }
 
+        // lock
+        if(locks.hasOwnProperty(from.toLowerCase() && locks[from.toLowerCase()]) return;
+        locks[from.toLowerCase()] = true;
+
         coin.getBalance(settings.rpc.prefix + from.toLowerCase(), settings.coin.min_confirmations, function(err, balance) {
           if(err) {
+            locks[from.toLowerCase()] = null;
             winston.error('Error in !tip command.', err);
             client.say(channel, settings.messages.error.expand({name: from}));
             return;
@@ -247,12 +253,14 @@ client.addListener('message', function(from, channel, message) {
               names = names.slice(0, max);
 
               if(amount / max < settings.coin.min_rain) {
+                locks[from.toLowerCase()] = null;
                 client.say(channel, settings.messages.rain_too_small.expand({from: from, amount: amount, min_rain: settings.coin.min_rain * max}));
                 return;
               }
 
               for (var i = 0; i < names.length; i++) {
                 coin.move(settings.rpc.prefix + from.toLowerCase(), settings.rpc.prefix + names[i].toLowerCase(), amount / max, function(err, reply) {
+                  if(i == names.length) locks[from.toLowerCase()] = null;
                   if(err || !reply) {
                     winston.error('Error in !tip command', err);
                     return;
@@ -278,7 +286,12 @@ client.addListener('message', function(from, channel, message) {
         var random = match[2];
         var amount = Number(match[3]);
 
+        // lock
+        if(locks.hasOwnProperty(from.toLowerCase() && locks[from.toLowerCase()]) return;
+        locks[from.toLowerCase()] = true;
+
         if(isNaN(amount)) {
+          locks[from.toLowerCase()] = null;
           client.say(channel, settings.messages.invalid_amount.expand({name: from, amount: match[3]}));
           return;
         }
@@ -290,17 +303,20 @@ client.addListener('message', function(from, channel, message) {
         }
 
         if(to.toLowerCase() == from.toLowerCase()) {
+          locks[from.toLowerCase()] = null;
           client.say(channel, settings.messages.tip_self.expand({name: from}));
           return;
         }
 
         if(amount < settings.coin.min_tip) {
+          locks[from.toLowerCase()] = null;
           client.say(channel, settings.messages.tip_too_small.expand({from: from, to: to, amount: amount}));
           return;
         }
         // check balance with min. 5 confirmations
         coin.getBalance(settings.rpc.prefix + from.toLowerCase(), settings.coin.min_confirmations, function(err, balance) {
           if(err) {
+            locks[from.toLowerCase()] = null;
             winston.error('Error in !tip command.', err);
             client.say(channel, settings.messages.error.expand({name: from}));
             return;
@@ -309,6 +325,7 @@ client.addListener('message', function(from, channel, message) {
 
           if(balance >= amount) {
             coin.send('move', settings.rpc.prefix + from.toLowerCase(), settings.rpc.prefix + to.toLowerCase(), amount, function(err, reply) {
+              locks[from.toLowerCase()] = null;
               if(err || !reply) {
                 winston.error('Error in !tip command', err);
                 client.say(channel, settings.messages.error.expand({name: from}));
@@ -319,6 +336,7 @@ client.addListener('message', function(from, channel, message) {
               client.say(channel, settings.messages.tipped.expand({from: from, to: to, amount: amount}));
             });
           } else {
+            locks[from.toLowerCase()] = null;
             winston.info('%s tried to tip %s %d, but has only %d', from, to, amount, balance);
             client.say(channel, settings.messages.no_funds.expand({name: from, balance: balance, short: amount - balance, amount: amount}));
           }
