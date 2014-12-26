@@ -219,7 +219,7 @@ client.addListener('message', function(from, channel, message) {
         }
 
         // lock
-        if(locks.hasOwnProperty(from.toLowerCase() && locks[from.toLowerCase()]) return;
+        if(locks.hasOwnProperty(from.toLowerCase()) && locks[from.toLowerCase()]) return;
         locks[from.toLowerCase()] = true;
 
         coin.getBalance(settings.rpc.prefix + from.toLowerCase(), settings.coin.min_confirmations, function(err, balance) {
@@ -287,7 +287,7 @@ client.addListener('message', function(from, channel, message) {
         var amount = Number(match[3]);
 
         // lock
-        if(locks.hasOwnProperty(from.toLowerCase() && locks[from.toLowerCase()]) return;
+        if(locks.hasOwnProperty(from.toLowerCase()) && locks[from.toLowerCase()]) return;
         locks[from.toLowerCase()] = true;
 
         if(isNaN(amount)) {
