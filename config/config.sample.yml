@@ -3,6 +3,7 @@ connection:
   port: 6697
   secure: true
   debug: false
+  bind_address: # leave empty if you don't know what it is
 login: 
   nickname: nodetip
   username: nodetip

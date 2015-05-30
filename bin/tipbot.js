@@ -67,6 +67,8 @@ var client = new irc.Client(settings.connection.host, settings.login.nickname, {
   port:   settings.connection.port, 
   secure: settings.connection.secure, 
 
+  localAddress: settings.connection.bind_address,
+
   userName: settings.login.username,
   realName: settings.login.realname,
 

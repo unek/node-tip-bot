@@ -18,6 +18,7 @@ IRC network connection info.
 * **port** - port of the IRC server
 * **secure** - use secured connection
 * **status_command** - NickServ command to get nick's login status, ACC on freenode, STATUS on some other networks
+* **bind_address** - address to bind to when connecting
 
 ## login
 IRC network connection and login info.
