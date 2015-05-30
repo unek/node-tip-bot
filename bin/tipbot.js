@@ -154,7 +154,10 @@ client.addListener('error', function(message) {
 var last_active = {};
 var locks       = {};
 client.addListener('message', function(from, channel, message) {
-  last_active[from] = Date.now();
+  // basically ignore pms for the last-active-rain thing
+  if(settings.channels.indexOf(channel))
+    last_active[from] = Date.now();
+
   var match = message.match(/^(!?)(\S+)/);
   if(match == null) return;
   var prefix  = match[1];
