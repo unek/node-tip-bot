@@ -52,6 +52,9 @@ commands:
   terms:
     pm: true
     channel: false
+  info:
+    pm: true
+    channel: true
   rain:
     pm: false
     channel: true
@@ -86,3 +89,6 @@ messages:
   terms:
     - 'There are no fees to use %nick%, with the exception of %withdrawal_fee%%short_name% fee on withdrawals.'
     - 'In no event shall %nick% be responsible in the event of lost, stolen or misdirected funds.'
+  info:
+    - 'Information about your coin, channel or bot'
+    - 'sent to the person who issued the command via private message'
