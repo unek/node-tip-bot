@@ -4,6 +4,7 @@ var irc    = require('irc'),
   yaml     = require('js-yaml'),
   coin     = require('node-dogecoin'),
   webadmin = require('../lib/webadmin/app');
+var Cryptsy  = require('cryptsy');
 
 // check if the config file exists
 if(!fs.existsSync('./config/config.yml')) {
@@ -21,6 +22,9 @@ process.on('exit', function() {
 
 // load settings
 var settings = yaml.load(fs.readFileSync('./config/config.yml', 'utf-8'));
+
+// Load Cryptsy
+var cryptsy = new Cryptsy(settings.cryptsy.key, settings.cryptsy.secret);
 
 // load winston's cli defaults
 winston.cli();
@@ -281,6 +285,17 @@ client.addListener('message', function(from, channel, message) {
             client.say(channel, settings.messages.no_funds.expand({name: from, balance: balance, short: amount - balance, amount: amount}));
           }
         })
+        break;
+      case 'price':
+        cryptsy.api('singlemarketdata', { marketid: 200 }, function (err, data) {
+        if(err) {
+          winston.error('Error in !price command.', err);
+          client.say(channel, settings.messages.error.expand({name: from}));
+          return;
+        }
+        winston.info('Fetched MYR Price From Cryptsy')
+        client.say(channel, settings.messages.price.expand({amount: data}));
+        });
         break;
       case 'tip':
         var match = message.match(/^.?tip (\S+) (random)?([\d\.]+)/);
